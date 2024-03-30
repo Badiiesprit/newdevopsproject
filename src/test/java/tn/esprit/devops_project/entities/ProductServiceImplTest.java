@@ -1,28 +1,24 @@
 package tn.esprit.devops_project.entities;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import tn.esprit.devops_project.entities.Product;
-import tn.esprit.devops_project.entities.ProductCategory;
-import tn.esprit.devops_project.entities.Stock;
 import tn.esprit.devops_project.repositories.ProductRepository;
 import tn.esprit.devops_project.repositories.StockRepository;
 import tn.esprit.devops_project.services.Iservices.IProductService;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @SpringBootTest
 @ActiveProfiles("test")
 class ProductServiceImplTest {
 
-    @Autowired
-    private IProductService iProductService;
+
 
     @Autowired
     private StockRepository stockRepository;
@@ -30,36 +26,76 @@ class ProductServiceImplTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private IProductService productService;
+
     @Test
-    public void testAddProduct() {
+    public void AddProductTest() {
 
-        Stock stock = new Stock(100L,"BERSHKA",null);
-        Stock savedStock = stockRepository.save(stock);
+        Product product1 = new Product();
+        product1.setTitle("Test Product 1");
+        product1.setPrice(10.0f);
+        product1.setQuantity(5);
+        product1.setCategory(ProductCategory.ELECTRONICS);
 
-        assertNotNull(savedStock);
-            /*Product product = new Product(6L,"T-shirt",320,50,ProductCategory.CLOTHING,null);
-        Product savedProduct = iProductService.addProduct(product, 1L);
-        //productRepository.save(savedProduct);
-        Stock savedStock = stockRepository.findById(savedProduct.getStock().getIdStock()).orElse(null);
-        assertNotNull(savedStock);
-        assertNotNull(savedProduct);
-        Product retrievedProduct = productRepository.findById(savedProduct.getIdProduct()).orElse(null);
-        */
+        Product product2 = new Product();
+        product2.setTitle("Test Product 2");
+        product2.setPrice(20.0f);
+        product2.setQuantity(8);
+        product2.setCategory(ProductCategory.CLOTHING);
 
+        Product product3 = new Product();
+        product3.setTitle("Test Product 3");
+        product3.setPrice(30.0f);
+        product3.setQuantity(10);
+        product3.setCategory(ProductCategory.BOOKS);
 
+        Product addedProduct1 = productService.addProduct(product1, 1L);
+        Product addedProduct2 = productService.addProduct(product2, 2L);
+        Product addedProduct3 = productService.addProduct(product3, 3L);
+
+        assertNotNull(addedProduct1);
+        assertNotNull(addedProduct2);
+        assertNotNull(addedProduct3);
+
+        assertEquals("Test Product 1", addedProduct1.getTitle());
+        assertEquals("Test Product 2", addedProduct2.getTitle());
+        assertEquals("Test Product 3", addedProduct3.getTitle());
     }
-   /* @Test
-    public void retrieveAllProducts(){
-        List<Product> products = iProductService.retreiveAllProduct();
+    @Test
+    public void retrieveAllProductsTest(){
+        List<Product> products = productService.retreiveAllProduct();
         assertNotNull(products);
     }
 
     @Test
-    public void retrieveProduct(){
-        Product savedProduct = iProductService.retrieveProduct(1L);
+    public void retrieveProductTest() {
+
+        long expectedProductId = 17L;
+
+        Product savedProduct = productService.retrieveProduct(expectedProductId);
         assertNotNull(savedProduct);
-        assertEquals(1L,1L);
+
+        assertEquals(expectedProductId, savedProduct.getIdProduct());
     }
-*/
+
+    @Test
+    public void retrieveProductByCategoryTest() {
+        ProductCategory category = ProductCategory.ELECTRONICS;
+
+        List<Product> products = productService.retrieveProductByCategory(category);
+
+        assertNotNull(products);
+    }
+//    @Test
+//    public void deleteProductTest() {
+//        Long productId = 7L;
+//        productService.deleteProduct(productId);
+//        Product deletedProduct = productService.retrieveProduct(productId);
+//        assertNull(deletedProduct);
+//    }
+
+
+
 
 }
